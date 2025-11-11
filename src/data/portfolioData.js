@@ -11,7 +11,7 @@ export const portfolioData = {
     summary: "Programador dinámico con una base sólida en desarrollo Frontend utilizando React y TypeScript. Actualmente expandiendo mis habilidades hacia el Backend con Node.js y Django. Busco oportunidades para aplicar mis conocimientos en la creación de soluciones innovadoras y contribuir al éxito de proyectos desafiantes.",
     links: {
       github: "https://github.com/dguaidot",
-      linkedin: "https://www.linkedin.com/in/david-guaidot-4002b4376/",
+      linkedin: "https://www.linkedin.com/in/david-guaidot-19914338b/",
       email: "mailto:guaidot4206@gmail.com",
       whatsapp: "https://wa.me/584242736786",
       telegram: "https://t.me/dguaidot"

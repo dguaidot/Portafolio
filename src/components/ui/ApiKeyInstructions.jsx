@@ -48,16 +48,19 @@ const ApiKeyInstructions = () => {
             <div className="bg-yellow-100 dark:bg-yellow-800 p-2 rounded border border-yellow-200 dark:border-yellow-700">
               <div className="flex items-center justify-between">
                 <code className="text-yellow-800 dark:text-yellow-200">
-                  AIzaSyCrMgLgOj3kOQAP1sZrqxE19y-ceH9heRs=tu_api_key_aqui
+                  VITE_GEMINI_API_KEY=
                 </code>
                 <button
-                  onClick={() => copyToClipboard('AIzaSyCrMgLgOj3kOQAP1sZrqxE19y-ceH9heRs=tu_api_key_aqui')}
+                  onClick={() => copyToClipboard('VITE_GEMINI_API_KEY=')}
                   className="ml-2 p-1 hover:bg-yellow-200 dark:hover:bg-yellow-700 rounded"
                   title="Copiar"
                 >
                   {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
+              <p className="mt-2 text-xs text-yellow-700 dark:text-yellow-300">
+                Después de pegarlo en el archivo, escribe tu clave real a continuación del signo igual.
+              </p>
             </div>
             
             <div className="flex items-center gap-2">

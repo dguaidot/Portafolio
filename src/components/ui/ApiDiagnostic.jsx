@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 import { AlertTriangle, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
+import {
+  callGemini,
+  getGeminiApiKey,
+  listGeminiModels,
+  GEMINI_MODEL,
+} from '../../utils/gemini';
 import Button from './Button';
 
 const ApiDiagnostic = () => {
@@ -11,29 +17,65 @@ const ApiDiagnostic = () => {
     setDiagnostic(null);
 
     const results = {
-      apiKey: !!import.meta.env.VITE_GEMINI_API_KEY,
-      apiKeyLength: import.meta.env.VITE_GEMINI_API_KEY?.length || 0,
+      apiKey: false,
+      apiKeyLength: 0,
       environment: import.meta.env.MODE,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      defaultModel: GEMINI_MODEL,
+      availableModels: [],
     };
 
-    // Test de conectividad básica
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyCrMgLgOj3kOQAP1sZrqxE19y-ceH9heRs';
-      console.log('ApiDiagnostic - API Key:', apiKey);
-        const testResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: "Responde solo con 'OK' si puedes leer esto."
-            }]
-          }]
-        })
-      });
+      const apiKey = getGeminiApiKey();
+      results.apiKey = true;
+      results.apiKeyLength = apiKey.length;
+
+      try {
+        const modelsData = await listGeminiModels();
+        const formattedModels =
+          modelsData?.models?.map((model) => ({
+            name: model.name,
+            displayName: model.displayName,
+            supportedMethods:
+              model.supportedGenerationMethods ||
+              model.generationMethods ||
+              model.supportedMethods ||
+              [],
+          })) ?? [];
+
+        results.availableModels = formattedModels;
+
+        const fallbackModel =
+          formattedModels.find((model) =>
+            model.supportedMethods?.includes('generateContent')
+          ) ||
+          formattedModels.find((model) =>
+            model.supportedMethods?.includes('multimodal')
+          ) ||
+          formattedModels[0] ||
+          null;
+
+        if (fallbackModel) {
+          results.detectedModel = fallbackModel.name;
+        }
+      } catch (modelsError) {
+        results.modelsError = modelsError.message;
+      }
+
+      const modelForTest = results.detectedModel || results.defaultModel;
+      results.testModel = modelForTest;
+
+      const testResponse = await callGemini({
+        contents: [
+          {
+            parts: [
+              {
+                text: "Responde solo con 'OK' si puedes leer esto.",
+              },
+            ],
+          },
+        ],
+      }, { model: modelForTest });
 
       results.connectivity = testResponse.ok;
       results.status = testResponse.status;
@@ -96,7 +138,7 @@ const ApiDiagnostic = () => {
                   API Key configurada: {diagnostic.apiKey ? 'Sí' : 'No'}
                 </span>
               </div>
-              
+
               {diagnostic.apiKey && (
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-green-600" />
@@ -105,7 +147,16 @@ const ApiDiagnostic = () => {
                   </span>
                 </div>
               )}
-              
+
+              {diagnostic.testModel && (
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <span className="text-blue-800 dark:text-blue-200">
+                    Modelo usado en la prueba: {diagnostic.testModel}
+                  </span>
+                </div>
+              )}
+
               <div className="flex items-center gap-2">
                 {diagnostic.connectivity ? (
                   <CheckCircle className="w-4 h-4 text-green-600" />
@@ -116,13 +167,13 @@ const ApiDiagnostic = () => {
                   Conectividad: {diagnostic.connectivity ? 'OK' : 'Error'}
                 </span>
               </div>
-              
+
               {diagnostic.status && (
                 <div className="text-blue-800 dark:text-blue-200">
                   Status HTTP: {diagnostic.status}
                 </div>
               )}
-              
+
               {diagnostic.apiError && (
                 <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded border border-red-200 dark:border-red-800">
                   <div className="text-red-800 dark:text-red-200 font-medium">Error de API:</div>
@@ -131,7 +182,46 @@ const ApiDiagnostic = () => {
                   </pre>
                 </div>
               )}
-              
+
+              {diagnostic.availableModels?.length > 0 && (
+                <div className="bg-blue-100/60 dark:bg-blue-900/40 p-2 rounded border border-blue-200 dark:border-blue-700">
+                  <div className="text-blue-900 dark:text-blue-100 font-medium mb-1">
+                    Modelos detectados ({diagnostic.availableModels.length}):
+                  </div>
+                  <ul className="space-y-1 text-xs text-blue-800 dark:text-blue-200">
+                    {diagnostic.availableModels.slice(0, 5).map((model) => (
+                      <li key={model.name}>
+                        <span className="font-semibold">{model.displayName || model.name}</span>{' '}
+                        <span className="text-blue-700/80 dark:text-blue-200/80">
+                          ({model.name})
+                        </span>
+                        {model.supportedMethods?.length ? (
+                          <span className="block">
+                            Métodos: {model.supportedMethods.join(', ')}
+                          </span>
+                        ) : null}
+                      </li>
+                    ))}
+                    {diagnostic.availableModels.length > 5 && (
+                      <li className="italic text-blue-700/80 dark:text-blue-200/80">
+                        … y {diagnostic.availableModels.length - 5} modelos más
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+
+              {diagnostic.modelsError && (
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded border border-yellow-200 dark:border-yellow-700">
+                  <div className="text-yellow-800 dark:text-yellow-200 font-medium">
+                    No se pudo obtener la lista de modelos:
+                  </div>
+                  <div className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
+                    {diagnostic.modelsError}
+                  </div>
+                </div>
+              )}
+
               {diagnostic.error && (
                 <div className="bg-red-50 dark:bg-red-900/20 p-2 rounded border border-red-200 dark:border-red-800">
                   <div className="text-red-800 dark:text-red-200 font-medium">Error de conexión:</div>

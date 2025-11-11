@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Input = ({ 
+const Input = ({
   type = 'text',
   placeholder = '',
   value,
@@ -8,7 +8,9 @@ const Input = ({
   error = '',
   disabled = false,
   className = '',
-  ...props 
+  multiline = false,
+  rows = 4,
+  ...props
 }) => {
   const baseClasses = 'w-full p-2 rounded-md border transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500';
   
@@ -24,15 +26,27 @@ const Input = ({
   
   return (
     <div className="w-full">
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        className={classes}
-        {...props}
-      />
+      {multiline ? (
+        <textarea
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          className={`${classes} resize-none`}
+          rows={rows}
+          {...props}
+        />
+      ) : (
+        <input
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          className={classes}
+          {...props}
+        />
+      )}
       {error && (
         <p className="mt-1 text-sm text-red-500 flex items-center gap-1">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send, Loader2, Code, CheckCircle } from 'lucide-react';
+import { callGemini } from '../../utils/gemini';
 import { Button, Input } from '../ui';
 
 const CodeReviewAssistant = () => {
@@ -15,18 +16,12 @@ const CodeReviewAssistant = () => {
     setResponse('');
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyCrMgLgOj3kOQAP1sZrqxE19y-ceH9heRs';
-      console.log('CodeReviewAssistant - API Key:', apiKey);
-      
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Eres un experto en code review. Analiza este código y proporciona una revisión detallada:
+      const response = await callGemini({
+        contents: [
+          {
+            parts: [
+              {
+                text: `Eres un experto en code review. Analiza este código y proporciona una revisión detallada:
 
 Código a revisar:
 \`\`\`
@@ -40,10 +35,11 @@ Por favor proporciona:
 4. Mejores prácticas a aplicar
 5. Sugerencias de refactoring
 
-Responde en español y sé específico con ejemplos de código mejorado.`
-            }]
-          }]
-        })
+Responde en español y sé específico con ejemplos de código mejorado.`,
+              },
+            ],
+          },
+        ],
       });
 
       const data = await response.json();

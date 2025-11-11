@@ -54,14 +54,7 @@ const SkillsEnhanced = () => {
             <h3 className="text-2xl font-semibold text-main-800 dark:text-main-100 mb-6">
               Asistentes de IA
             </h3>
-            
-            {(() => {
-              const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyCrMgLgOj3kOQAP1sZrqxE19y-ceH9heRs';
-              console.log('VITE_GEMINI_API_KEY:', import.meta.env.VITE_GEMINI_API_KEY);
-              console.log('Fallback API Key:', apiKey);
-              console.log('All env vars:', import.meta.env);
-              return <ApiDiagnostic />;
-            })()}
+            <ApiDiagnostic />
             
             <div className="space-y-4">
               <Accordion 

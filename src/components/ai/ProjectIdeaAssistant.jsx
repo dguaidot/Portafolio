@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send, Loader2, Lightbulb, Rocket } from 'lucide-react';
+import { callGemini } from '../../utils/gemini';
 import { Button, Input } from '../ui';
 
 const ProjectIdeaAssistant = () => {
@@ -15,18 +16,12 @@ const ProjectIdeaAssistant = () => {
     setResponse('');
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyCrMgLgOj3kOQAP1sZrqxE19y-ceH9heRs';
-      console.log('ProjectIdeaAssistant - API Key:', apiKey);
-      
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Eres un experto en desarrollo de software y generación de ideas de proyectos. Analiza esta descripción y genera ideas de proyectos:
+      const response = await callGemini({
+        contents: [
+          {
+            parts: [
+              {
+                text: `Eres un experto en desarrollo de software y generación de ideas de proyectos. Analiza esta descripción y genera ideas de proyectos:
 
 Descripción: ${description}
 
@@ -38,10 +33,11 @@ Por favor proporciona:
 5. Consejos para la implementación
 6. Posibles mejoras futuras
 
-Responde en español y sé creativo pero realista.`
-            }]
-          }]
-        })
+Responde en español y sé creativo pero realista.`,
+              },
+            ],
+          },
+        ],
       });
 
       const data = await response.json();

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send, Loader2, Briefcase, FileText } from 'lucide-react';
+import { callGemini } from '../../utils/gemini';
 import { Button, Input } from '../ui';
 
 const JobApplicationAssistant = () => {
@@ -15,18 +16,12 @@ const JobApplicationAssistant = () => {
     setResponse('');
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyCrMgLgOj3kOQAP1sZrqxE19y-ceH9heRs';
-      console.log('JobApplicationAssistant - API Key:', apiKey);
-      
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Eres un asistente especializado en aplicaciones de empleo. Analiza esta descripción de trabajo y proporciona consejos específicos para aplicar exitosamente:
+      const response = await callGemini({
+        contents: [
+          {
+            parts: [
+              {
+                text: `Eres un asistente especializado en aplicaciones de empleo. Analiza esta descripción de trabajo y proporciona consejos específicos para aplicar exitosamente:
 
 Descripción del trabajo: ${jobDescription}
 
@@ -37,10 +32,11 @@ Por favor proporciona:
 4. Consejos para la entrevista
 5. Preguntas inteligentes para hacer al empleador
 
-Responde en español y sé específico y práctico.`
-            }]
-          }]
-        })
+Responde en español y sé específico y práctico.`,
+              },
+            ],
+          },
+        ],
       });
 
       const data = await response.json();
