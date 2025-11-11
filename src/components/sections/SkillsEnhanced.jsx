@@ -1,8 +1,6 @@
 import React from 'react';
 import { Code, MessageSquare, Lightbulb, Briefcase, Brain, Rocket, CheckCircle } from 'lucide-react';
 import Accordion from '../ui/Accordion';
-import ApiKeyInstructions from '../ui/ApiKeyInstructions';
-import ApiDiagnostic from '../ui/ApiDiagnostic';
 import { TechnologyIcon } from '../icons/TechnologyIcons';
 import { 
   JobApplicationAssistant, 
@@ -54,8 +52,6 @@ const SkillsEnhanced = () => {
             <h3 className="text-2xl font-semibold text-main-800 dark:text-main-100 mb-6">
               Asistentes de IA
             </h3>
-            <ApiDiagnostic />
-            
             <div className="space-y-4">
               <Accordion 
                 title="Asistente de Aplicación de Empleo" 

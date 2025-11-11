@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="portfolioGradient" x1="0" y1="64" x2="64" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f172a" />
+      <stop offset="1" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#portfolioGradient)" />
+  <path
+    fill="none"
+    stroke="#bfdbfe"
+    stroke-width="4"
+    stroke-linejoin="round"
+    d="M22 22v-4a6 6 0 0 1 6-6h8a6 6 0 0 1 6 6v4"
+  />
+  <rect
+    x="14"
+    y="22"
+    width="36"
+    height="26"
+    rx="8"
+    fill="#1e293b"
+    stroke="#e0f2fe"
+    stroke-width="3"
+  />
+  <path
+    fill="none"
+    stroke="#60a5fa"
+    stroke-width="3"
+    stroke-linecap="round"
+    d="M24 32h16c3 0 5 2 5 5s-2 5-5 5h-8"
+  />
+  <path
+    fill="none"
+    stroke="#f8fafc"
+    stroke-width="3"
+    stroke-linecap="round"
+    d="M24 42v-10"
+  />
+  <path
+    fill="#38bdf8"
+    d="M47 16h6v6h-6zM51 26h5v5h-5z"
+  />
+</svg>
+
